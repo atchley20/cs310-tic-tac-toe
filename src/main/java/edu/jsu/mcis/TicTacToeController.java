@@ -1,6 +1,9 @@
 package edu.jsu.mcis;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
 
-public class TicTacToeController {
+public class TicTacToeController implements ActionListener{
 
     private final TicTacToeModel model;
     private final TicTacToeView view;
@@ -12,29 +15,35 @@ public class TicTacToeController {
         /* Initialize model, view, and width */
 
         model = new TicTacToeModel(width);
-        view = new TicTacToeView();
+        view = new TicTacToeView(this, width);
         
     }
 
-    public void start() {
+    public String getMarkAsString(int row, int col) {        
+        return (model.getMark(row, col).toString());        
+    }
     
-        while(model.isGameover() == false)
+    public TicTacToeView getView() {        
+        return view;        
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) 
+    {
+        JButton pressed = (JButton)event.getSource();
+
+        int row = (int) (pressed.getName().charAt(6) - 48);
+        int col = (int) (pressed.getName().charAt(7) - 48);
+        if(!model.isGameover())
         {
-            view.showBoard(model.toString());
-            TicTacToeMove Move = view.getNextMove(model.isXTurn());
-            if (model.makeMark(Move.getRow(), Move.getCol()))
-            {
-                
-            }
-            else{
-                view.showInputError();
-            }
+            model.makeMark(row, col);
+            pressed.setText(model.getMark(row, col).toString());
+
+        if(model.getResult().toString() == "X" || model.getResult().toString() == "O" || model.getResult().toString() == "TIE")
+        {
+            view.showResult(model.getResult().toString().toUpperCase());
         }
-
-        view.showBoard(model.toString());
-
-        view.showResult(model.getResult().toString());
-        
+        }       
     }
 
 }
